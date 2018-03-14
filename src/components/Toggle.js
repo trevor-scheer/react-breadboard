@@ -1,42 +1,39 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {withBreadboard} from './BreadboardContext';
-import ToggleCircuit from '../circuits/Toggle';
 
 class Toggle extends Component {
   static propTypes = {
-    outBusId: PropTypes.number.isRequired,
-    outPinId: PropTypes.number.isRequired
+    toggle: PropTypes.object.isRequired
   };
-
-  state = {
-    toggleState: false
-  };
-
-  toggle = new ToggleCircuit();
 
   componentDidMount() {
-    this.toggle.addSubscriber(toggleState => {
-      this.setState({toggleState});
+    this.unsubscribe = this.props.toggle.addSubscriber({
+      fn: () => {
+        this.forceUpdate();
+      }
     });
-    this.props.breadboard.addCircuit({
-      circuit: this.toggle,
-      outputs: [{busId: this.props.outBusId, pinId: this.props.outPinId}]
-    });
-    console.warn({breadboard: this.props.breadboard});
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   handleClick = () => {
-    this.toggle.toggle();
+    this.props.toggle.toggle();
   };
 
   render() {
     return (
-      <button onClick={this.handleClick}>
-        Toggle: {this.state.toggleState ? 'true' : 'false'}
-      </button>
+      <rect
+        onClick={this.handleClick}
+        x={this.props.toggle.outputs[0].x}
+        y={this.props.toggle.outputs[0].y}
+        width={8}
+        height={8}
+        fill="black"
+      />
     );
   }
 }
 
-export default withBreadboard(Toggle);
+export default Toggle;

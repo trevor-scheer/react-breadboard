@@ -1,6 +1,13 @@
 import React from 'react';
 
-const BreadboardSvg = ({unit, busCount, busSize, getRef, onPinClick}) => {
+const BreadboardSvg = ({
+  unit,
+  busCount,
+  busSize,
+  getRef,
+  onPinClick,
+  children
+}) => {
   const BOARD_WIDTH = unit * busCount / 2;
   const BOARD_HEIGHT = unit * (2 * busSize + 1);
   const PINHOLE_SIZE = 2;
@@ -24,7 +31,14 @@ const BreadboardSvg = ({unit, busCount, busSize, getRef, onPinClick}) => {
             width={PINHOLE_SIZE}
             height={PINHOLE_SIZE}
             key={`${xIndex}_${yIndex}`}
-            onClick={() => onPinClick({busId: xIndex, pinId: yIndex})}
+            onClick={() =>
+              onPinClick({
+                busId: xIndex,
+                pinId: yIndex,
+                x: (xIndex + 0.5) * unit - PINHOLE_SIZE / 2,
+                y: (yIndex + 0.5) * unit
+              })
+            }
           />,
           <rect
             x={(xIndex + 0.5) * unit - PINHOLE_SIZE / 2}
@@ -35,12 +49,15 @@ const BreadboardSvg = ({unit, busCount, busSize, getRef, onPinClick}) => {
             onClick={() =>
               onPinClick({
                 busId: busCount - xIndex - 1,
-                pinId: busSize - yIndex - 1
+                pinId: busSize - yIndex - 1,
+                x: (xIndex + 0.5) * unit - PINHOLE_SIZE / 2,
+                y: (yIndex + busSize + 2 - 0.5) * unit - PINHOLE_SIZE
               })
             }
           />
         ])
       )}
+      {children}
     </svg>
   );
 };

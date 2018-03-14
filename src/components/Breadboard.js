@@ -1,8 +1,11 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import throttle from 'lodash.throttle';
 import {withBreadboard} from './BreadboardContext';
 import BreadboardSvg from './BreadboardSvg';
-import Toggle from './Toggle';
+
+import ToggleCircuit from '../circuits/Toggle';
+
+import Circuit from './Circuit';
 
 // sq. unit in px
 const UNIT = 20;
@@ -15,11 +18,9 @@ const styles = {
   position: 'relative',
   width: '90%',
   margin: '0 auto'
-  //maxWidth: '1000px',
-  //height: 'auto'
 };
 
-class Breadboard extends Component {
+class Breadboard extends PureComponent {
   static propTypes = {};
 
   static defaultProps = {};
@@ -27,7 +28,6 @@ class Breadboard extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
     this.unsubscribe = this.props.breadboard.subscribe(() => {
-      console.warn('updated breadboard');
       this.forceUpdate();
     });
   }
@@ -57,41 +57,19 @@ class Breadboard extends Component {
     const relativeX = xVal - this.xOffset;
     return Math.round(relativeX / UNIT);
   };
-  /*
-  handleDragOver = throttle((x, y) => {
-    //console.warn(x, y);
-    //console.warn(this.getNearestColumn(x), this.getNearestRow(y));
-    this.setState({
-      highlightX: this.getNearestColumn(x),
-      highlightY: this.getNearestRow(y)
+
+  handlePinClick = ({busId, pinId, x, y}) => {
+    console.log(busId, pinId, x, y);
+
+    this.props.breadboard.addCircuit({
+      circuit: new ToggleCircuit(),
+      outputs: [{busId, pinId, x, y}]
     });
-  }, 100);
-
-  handleDragEnter = () => {
-    //console.warn('dragEnter');
-    this.setState({showHighlight: true});
-  };
-
-  handleDragEnd = () => {
-    this.setState({showHighlight: false});
-  };*/
-  /*
-  * @param {Circuit} circuit
-  * @param {{inputId: Number, busId: Number, pinId: Number}[]} inputs
-  * @param {{busId: Number, pinId: Number}[]} outputs
-*/
-  state = {
-    selectedBus: null,
-    selectedPin: null
-  };
-
-  handlePinClick = ({busId, pinId}) => {
-    console.log(busId, pinId);
-    this.setState({selectedBus: busId, selectedPin: pinId});
   };
 
   render() {
     const {breadboard} = this.props;
+
     return (
       <div className="Breadboard" style={styles} onClick={this.handleClick}>
         <BreadboardSvg
@@ -102,15 +80,11 @@ class Breadboard extends Component {
           busCount={breadboard.busCount}
           busSize={breadboard.busSize}
           onPinClick={this.handlePinClick}
-        />
-        {this.props.children}
-        {this.state.selectedBus &&
-          this.state.selectedPin && (
-            <Toggle
-              outPinId={this.state.selectedPin}
-              outBusId={this.state.selectedBus}
-            />
-          )}
+        >
+          {Object.values(breadboard.circuits).map(circuit => (
+            <Circuit circuit={circuit} key={circuit.id} />
+          ))}
+        </BreadboardSvg>
       </div>
     );
   }

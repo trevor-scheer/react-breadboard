@@ -3,6 +3,7 @@ let id = 0;
 export default class Circuit {
   constructor(resolver) {
     this.subscribers = [];
+    this.outputs = [];
     this.inputs = Array(resolver.length).fill(false);
     this.subscriptions = this.inputs.map((_, index) => newVal => {
       this.inputs[index] = newVal;
@@ -16,10 +17,19 @@ export default class Circuit {
     return id++;
   }
 
-  subscribeInput = index => this.subscriptions[index];
+  subscribeInput = ({index, x, y}) => {
+    return this.subscriptions[index];
+  };
 
-  addSubscriber = newSub => {
-    this.subscribers.push(newSub);
+  addSubscriber = ({fn, x, y}) => {
+    // If no x && y, this is a view subscriber
+    if (x && y) {
+      this.outputs.push({x, y});
+    }
+    this.subscribers.push(fn);
+    return () => {
+      this.subscribers = this.subscribers.filter(sub => sub !== newSub);
+    };
   };
 
   update() {

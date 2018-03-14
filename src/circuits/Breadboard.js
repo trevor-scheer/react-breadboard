@@ -27,16 +27,21 @@ export default class Breadboard {
    * @param {{busId: Number, pinId: Number}[]} outputs from the circuit
    */
   addCircuit({circuit, inputs = [], outputs = []}) {
-    inputs.forEach(({inputId, busId, pinId}) => {
-      const fn = circuit.subscribeInput(inputId);
+    inputs.forEach(({inputId, busId, pinId, x, y}) => {
+      const fn = circuit.subscribeInput({inputId, x, y});
       this.buses[busId].registerOutput({index: pinId, fn});
     });
 
-    outputs.forEach(({busId, pinId}) => {
+    outputs.forEach(({busId, pinId, x, y}) => {
       const fn = this.buses[busId].registerInput({index: pinId});
-      circuit.addSubscriber(fn);
+      circuit.addSubscriber({fn, x, y});
     });
 
     this.circuits[circuit.id] = circuit;
+    this.updateSubscribers();
   }
+
+  updateSubscribers = () => {
+    this.subscribers.forEach(fn => fn());
+  };
 }
