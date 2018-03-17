@@ -8,8 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "clean":
-      "rimraf dist && prettier --config ./prettier.config.js --write \"**/*.{js,scss}\"",
+    "clean": "rimraf dist && prettier --config ./prettier.config.js --write \"**/*.{js,scss}\"",
     "build": "npm run clean && webpack",
     "serve": "webpack-dev-server -d"
   },
@@ -19,6 +18,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.7",
@@ -34,8 +34,11 @@
   },
   "dependencies": {
     "lodash.throttle": "^4.1.1",
+    "npm": "^5.7.1",
     "prop-types": "^15.6.1",
-    "react": "^16.3.0-alpha",
-    "react-dom": "^16.3.0-alpha"
+    "react": "^16.3.0-alpha.2",
+    "react-dom": "^16.3.0-alpha",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2"
   }
 }

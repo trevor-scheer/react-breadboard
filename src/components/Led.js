@@ -1,21 +1,41 @@
 import React, {Component} from 'react';
-import Identity from '../circuits/Identity';
+import PropTypes from 'prop-types';
 
-export default class Led extends Component {
-  led = new Identity();
-  state = {value: false};
+const PINHOLE_SIZE = 2;
+const SIZE = 8;
+
+class Led extends Component {
+  static propTypes = {
+    circuit: PropTypes.object.isRequired
+  };
 
   componentDidMount() {
-    this.led.addSubscriber(value => {
-      this.setState({value});
+    this.unsubscribe = this.props.circuit.addSubscriber({
+      fn: () => {
+        this.forceUpdate();
+      }
     });
-    this.props.breadboard.addCircuit({
-      circuit: this.led,
-      inputs: [this.props.breadboard.circuits[0]]
-    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   render() {
-    return <div className="Led">{JSON.stringify(this.state.value)}</div>;
+    const {inputs: [input], inputValues: [value]} = this.props.circuit;
+
+    return (
+      <g>
+        <rect
+          x={input.x + (PINHOLE_SIZE - SIZE) / 2}
+          y={input.y + (PINHOLE_SIZE - SIZE) / 2}
+          width={SIZE}
+          height={SIZE}
+          fill={value ? 'green' : 'black'}
+        />
+      </g>
+    );
   }
 }
+
+export default Led;

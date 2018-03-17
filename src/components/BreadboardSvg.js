@@ -23,40 +23,42 @@ const BreadboardSvg = ({
         strokeWidth="2"
         stroke="black"
       />
-      {[...Array(busCount / 2)].map((_, xIndex) =>
-        [...Array(busSize)].map((_, yIndex) => [
-          <rect
-            x={(xIndex + 0.5) * unit - PINHOLE_SIZE / 2}
-            y={(yIndex + 0.5) * unit}
-            width={PINHOLE_SIZE}
-            height={PINHOLE_SIZE}
-            key={`${xIndex}_${yIndex}`}
-            onClick={() =>
-              onPinClick({
-                busId: xIndex,
-                pinId: yIndex,
-                x: (xIndex + 0.5) * unit - PINHOLE_SIZE / 2,
-                y: (yIndex + 0.5) * unit
-              })
-            }
-          />,
-          <rect
-            x={(xIndex + 0.5) * unit - PINHOLE_SIZE / 2}
-            y={(yIndex + busSize + 2 - 0.5) * unit - PINHOLE_SIZE}
-            width={PINHOLE_SIZE}
-            height={PINHOLE_SIZE}
-            key={`${xIndex}_${yIndex}2`}
-            onClick={() =>
-              onPinClick({
-                busId: busCount - xIndex - 1,
-                pinId: busSize - yIndex - 1,
-                x: (xIndex + 0.5) * unit - PINHOLE_SIZE / 2,
-                y: (yIndex + busSize + 2 - 0.5) * unit - PINHOLE_SIZE
-              })
-            }
-          />
-        ])
-      )}
+      <g>
+        {[...Array(busCount / 2)].map((_, xIndex) =>
+          [...Array(busSize)].map((_, yIndex) => [
+            <rect
+              x={(xIndex + 0.5) * unit - PINHOLE_SIZE / 2}
+              y={(yIndex + 0.5) * unit}
+              width={PINHOLE_SIZE}
+              height={PINHOLE_SIZE}
+              key={`${xIndex}_${yIndex}`}
+              onClick={() =>
+                onPinClick({
+                  busId: xIndex,
+                  pinId: yIndex,
+                  x: (xIndex + 0.5) * unit - PINHOLE_SIZE / 2,
+                  y: (yIndex + 0.5) * unit
+                })
+              }
+            />,
+            <rect
+              x={(xIndex + 0.5) * unit - PINHOLE_SIZE / 2}
+              y={(yIndex + busSize + 2 - 0.5) * unit - PINHOLE_SIZE}
+              width={PINHOLE_SIZE}
+              height={PINHOLE_SIZE}
+              key={`${xIndex}_${yIndex}2`}
+              onClick={() =>
+                onPinClick({
+                  busId: busCount - xIndex - 1,
+                  pinId: busSize - yIndex - 1,
+                  x: (xIndex + 0.5) * unit - PINHOLE_SIZE / 2,
+                  y: (yIndex + busSize + 2 - 0.5) * unit - PINHOLE_SIZE
+                })
+              }
+            />
+          ])
+        )}
+      </g>
       {children}
     </svg>
   );

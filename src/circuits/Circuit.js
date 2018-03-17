@@ -1,15 +1,17 @@
 let id = 0;
 
 export default class Circuit {
-  constructor(resolver) {
+  constructor({resolver, type}) {
     this.subscribers = [];
     this.outputs = [];
-    this.inputs = Array(resolver.length).fill(false);
-    this.subscriptions = this.inputs.map((_, index) => newVal => {
-      this.inputs[index] = newVal;
+    this.inputs = [];
+    this.inputValues = Array(resolver.length).fill(false);
+    this.subscriptions = this.inputValues.map((_, index) => newVal => {
+      this.inputValues[index] = newVal;
       this.update();
     });
     this.resolver = resolver;
+    this.type = type;
     this.id = Circuit.getId();
   }
 
@@ -17,8 +19,9 @@ export default class Circuit {
     return id++;
   }
 
-  subscribeInput = ({index, x, y}) => {
-    return this.subscriptions[index];
+  subscribeInput = ({inputId, x, y}) => {
+    this.inputs.push({x, y});
+    return this.subscriptions[inputId];
   };
 
   addSubscriber = ({fn, x, y}) => {
@@ -34,7 +37,7 @@ export default class Circuit {
 
   update() {
     this.subscribers.forEach(subscriber => {
-      subscriber(this.resolver(...this.inputs));
+      subscriber(this.resolver(...this.inputValues));
     });
   }
 }

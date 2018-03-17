@@ -1,11 +1,14 @@
 import React, {PureComponent} from 'react';
-import throttle from 'lodash.throttle';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 import {withBreadboard} from './BreadboardContext';
 import BreadboardSvg from './BreadboardSvg';
 
 import ToggleCircuit from '../circuits/Toggle';
 
 import Circuit from './Circuit';
+import CircuitSelector from './CircuitSelector/CircuitSelector';
+import {selectPin, circuitAdded} from '../actions';
 
 // sq. unit in px
 const UNIT = 20;
@@ -26,52 +29,31 @@ class Breadboard extends PureComponent {
   static defaultProps = {};
 
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
     this.unsubscribe = this.props.breadboard.subscribe(() => {
       this.forceUpdate();
     });
+
+    // Pass the circuitAdded action to the breadboard so it can
+    // dispatch the action whenever a circuit is added
+    this.unsubscribeRedux = this.props.breadboard.subscribe(
+      this.props.circuitAdded
+    );
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
     this.unsubscribe();
+    this.unsubscribeRedux();
   }
 
-  handleResize = throttle(() => {
-    const {top, left} = this.node.getBoundingClientRect();
-    this.yOffset = top;
-    this.xOffset = left;
-  }, 300);
-
-  handleClick = e => {
-    this.getNearestRow(e.clientY);
-    this.getNearestColumn(e.clientX);
-  };
-
-  getNearestRow = yVal => {
-    const relativeY = yVal - this.yOffset;
-    return Math.round(relativeY / UNIT);
-  };
-
-  getNearestColumn = xVal => {
-    const relativeX = xVal - this.xOffset;
-    return Math.round(relativeX / UNIT);
-  };
-
   handlePinClick = ({busId, pinId, x, y}) => {
-    console.log(busId, pinId, x, y);
-
-    this.props.breadboard.addCircuit({
-      circuit: new ToggleCircuit(),
-      outputs: [{busId, pinId, x, y}]
-    });
+    this.props.selectPin({pin: {busId, pinId, x, y}});
   };
 
   render() {
     const {breadboard} = this.props;
 
     return (
-      <div className="Breadboard" style={styles} onClick={this.handleClick}>
+      <div className="Breadboard" style={styles}>
         <BreadboardSvg
           getRef={ref => {
             this.node = ref;
@@ -85,9 +67,13 @@ class Breadboard extends PureComponent {
             <Circuit circuit={circuit} key={circuit.id} />
           ))}
         </BreadboardSvg>
+
+        <CircuitSelector />
       </div>
     );
   }
 }
 
-export default withBreadboard(Breadboard);
+const connected = connect(null, {selectPin, circuitAdded});
+
+export default compose(connected, withBreadboard)(Breadboard);
