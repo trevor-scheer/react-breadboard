@@ -3,10 +3,6 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {withBreadboard} from './BreadboardContext';
 import BreadboardSvg from './BreadboardSvg';
-
-import ToggleCircuit from '../circuits/Toggle';
-
-import Circuit from './Circuit';
 import CircuitSelector from './CircuitSelector/CircuitSelector';
 import {selectPin, circuitAdded} from '../actions';
 
@@ -55,17 +51,12 @@ class Breadboard extends PureComponent {
     return (
       <div className="Breadboard" style={styles}>
         <BreadboardSvg
-          getRef={ref => {
-            this.node = ref;
-          }}
           unit={UNIT}
           busCount={breadboard.busCount}
           busSize={breadboard.busSize}
           onPinClick={this.handlePinClick}
         >
-          {Object.values(breadboard.circuits).map(circuit => (
-            <Circuit circuit={circuit} key={circuit.id} />
-          ))}
+          {Object.values(breadboard.components)}
         </BreadboardSvg>
 
         <CircuitSelector />

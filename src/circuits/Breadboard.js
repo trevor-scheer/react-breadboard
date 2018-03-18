@@ -10,6 +10,7 @@ export default class Breadboard {
   }
 
   circuits = {};
+  components = {};
   subscribers = [];
 
   subscribe(fn) {
@@ -23,10 +24,11 @@ export default class Breadboard {
    * Add a circuit to the breadboard with initial inputs and outputs
    *
    * @param {Circuit} circuit
+   * @param {Component} component React component that represents the circuit
    * @param {{inputId: Number, busId: Number, pinId: Number}[]} inputs into the circuit
    * @param {{busId: Number, pinId: Number}[]} outputs from the circuit
    */
-  addCircuit({circuit, inputs = [], outputs = []}) {
+  addCircuit({circuit, component, inputs = [], outputs = []}) {
     inputs.forEach(({inputId, busId, pinId, x, y}) => {
       const fn = circuit.subscribeInput({inputId, x, y});
       this.buses[busId].registerOutput({index: pinId, fn});
@@ -38,6 +40,7 @@ export default class Breadboard {
     });
 
     this.circuits[circuit.id] = circuit;
+    this.components[circuit.id] = component;
     this.updateSubscribers();
   }
 

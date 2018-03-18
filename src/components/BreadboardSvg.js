@@ -1,19 +1,12 @@
 import React from 'react';
 
-const BreadboardSvg = ({
-  unit,
-  busCount,
-  busSize,
-  getRef,
-  onPinClick,
-  children
-}) => {
+const BreadboardSvg = ({unit, busCount, busSize, onPinClick, children}) => {
   const BOARD_WIDTH = unit * busCount / 2;
   const BOARD_HEIGHT = unit * (2 * busSize + 1);
   const PINHOLE_SIZE = 2;
 
   return (
-    <svg viewBox={`0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`} ref={getRef}>
+    <svg viewBox={`0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`}>
       <rect width="100%" height="100%" fill="#FFE4B5" />
       <line
         x1="0"

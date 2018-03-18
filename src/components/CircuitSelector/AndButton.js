@@ -7,6 +7,7 @@ import {circuitTypes} from '../../constants';
 
 import {withBreadboard} from '../BreadboardContext';
 import AndCircuit from '../../circuits/AndGate';
+import AndComponent from '../And';
 
 class AndButton extends Component {
   componentWillReceiveProps(nextProps) {
@@ -14,12 +15,14 @@ class AndButton extends Component {
       nextProps.selectedCircuit === circuitTypes.AND &&
       nextProps.selectedPins.length === 3
     ) {
+      const andCircuit = new AndCircuit();
       this.props.breadboard.addCircuit({
-        circuit: new AndCircuit(),
+        circuit: andCircuit,
         inputs: nextProps.selectedPins
           .slice(0, 2)
           .map((input, index) => ({...input, inputId: index})),
-        outputs: [nextProps.selectedPins[2]]
+        outputs: [nextProps.selectedPins[2]],
+        component: <AndComponent circuit={andCircuit} key={andCircuit.id} />
       });
     }
   }

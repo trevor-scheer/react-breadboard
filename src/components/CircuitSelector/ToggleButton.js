@@ -7,17 +7,19 @@ import {circuitTypes} from '../../constants';
 
 import {withBreadboard} from '../BreadboardContext';
 import ToggleCircuit from '../../circuits/Toggle';
+import ToggleComponent from '../Toggle';
 
 class ToggleButton extends Component {
   componentWillReceiveProps(nextProps) {
-    console.warn(nextProps);
     if (
       nextProps.selectedCircuit === circuitTypes.TOGGLE &&
       nextProps.selectedPins.length === 1
     ) {
+      const toggle = new ToggleCircuit();
       this.props.breadboard.addCircuit({
-        circuit: new ToggleCircuit(),
-        outputs: nextProps.selectedPins
+        circuit: toggle,
+        outputs: nextProps.selectedPins,
+        component: <ToggleComponent circuit={toggle} key={toggle.id} />
       });
     }
   }
@@ -27,7 +29,6 @@ class ToggleButton extends Component {
   };
 
   render() {
-    console.warn(this.props);
     return <button onClick={this.handleClick}>Toggle</button>;
   }
 }

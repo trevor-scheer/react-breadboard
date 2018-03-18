@@ -7,20 +7,22 @@ import {circuitTypes} from '../../constants';
 
 import {withBreadboard} from '../BreadboardContext';
 import IdentityCircuit from '../../circuits/Identity';
+import LedComponent from '../Led';
 
 class LedButton extends Component {
   componentWillReceiveProps(nextProps) {
-    console.warn(nextProps);
     if (
       nextProps.selectedCircuit === circuitTypes.LED &&
       nextProps.selectedPins.length === 1
     ) {
+      const identity = new IdentityCircuit({type: circuitTypes.LED});
       this.props.breadboard.addCircuit({
-        circuit: new IdentityCircuit({type: circuitTypes.LED}),
+        circuit: identity,
         inputs: nextProps.selectedPins.map((input, index) => ({
           ...input,
           inputId: index
-        }))
+        })),
+        component: <LedComponent circuit={identity} key={identity.id} />
       });
     }
   }

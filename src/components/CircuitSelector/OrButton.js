@@ -7,6 +7,7 @@ import {circuitTypes} from '../../constants';
 
 import {withBreadboard} from '../BreadboardContext';
 import OrCircuit from '../../circuits/OrGate';
+import OrComponent from '../Or';
 
 class OrButton extends Component {
   componentWillReceiveProps(nextProps) {
@@ -14,12 +15,14 @@ class OrButton extends Component {
       nextProps.selectedCircuit === circuitTypes.OR &&
       nextProps.selectedPins.length === 3
     ) {
+      const or = new OrCircuit();
       this.props.breadboard.addCircuit({
-        circuit: new OrCircuit(),
+        circuit: or,
         inputs: nextProps.selectedPins
           .slice(0, 2)
           .map((input, index) => ({...input, inputId: index})),
-        outputs: [nextProps.selectedPins[2]]
+        outputs: [nextProps.selectedPins[2]],
+        component: <OrComponent circuit={or} key={or.id} />
       });
     }
   }
